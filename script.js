@@ -71,3 +71,23 @@ app.post("/users", (req, res) => {
     users.push(newUser);
     res.status(201).json(newUser);
 });
+// PUT - Update an existing user
+app.put("/users/:id", (req, res) => {
+    const userId = parseInt(req.params.id);
+    const updatedData = req.body;
+
+    let user = users.find(u => u.id === userId);
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    user.name = updatedData.name;
+    res.json(user);
+});
+
+// DELETE - Remove a user
+app.delete("/users/:id", (req, res) => {
+    const userId = parseInt(req.params.id);
+    users = users.filter(user => user.id !== userId);
+    res.json({ message: "User deleted successfully" });
+});

@@ -1,0 +1,39 @@
+GET http://localhost:3000/get-data
+
+
+###
+GET http://localhost:3000/get-data/67c87e35472d22cf087f9f67
+
+
+###
+
+POST  http://localhost:3000/add-data
+Content-Type: application/json
+
+{
+    "name": "Shahensha",
+    "email": "shahensa@gmail.com",
+    "age": 18,
+    "hobbies": [
+        "gaming",
+        "badminton",
+        "ping pong"
+    ]
+}
+
+###
+
+DELETE  http://localhost:3000/delete-data/67c877a4b45737ab797343d6
+
+
+###
+
+PATCH  http://localhost:3000/patch-data/67c87e35472d22cf087f9f67
+Content-Type: application/json
+
+{
+
+    "name": "Rekhu"
+}
+
+

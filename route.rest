@@ -1,5 +1,5 @@
 GET http://localhost:3000/get-data
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M5Y2RmN2ZkZTEzMjY3ODE0YzUxMjMiLCJ1c2VybmFtZSI6InNoYWhlbnNoYSIsImlhdCI6MTc0MTI4MjE3MiwiZXhwIjoxNzQxMjgyMjMyfQ.W-fdz96TSgw2eUtBMCBj_S14hBngPQ4MiGefLvP0-34
 
 ###
 GET http://localhost:3000/get-data/67c87e35472d22cf087f9f67
@@ -9,6 +9,7 @@ GET http://localhost:3000/get-data/67c87e35472d22cf087f9f67
 
 POST  http://localhost:3000/add-data
 Content-Type: application/json
+
 
 {
     "name": "Shahensha",
@@ -37,3 +38,11 @@ Content-Type: application/json
 }
 
 
+###
+POST  http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "username": "shahensha",
+    "password":"shahensha12"
+}

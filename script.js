@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import bodyParser from'body-parser';
 import {MongoClient,ServerApiVersion, ObjectId} from "mongodb";
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -45,7 +47,7 @@ run().catch(console.dir);
 
 
 ///get all data
-app.get('/get-data', async (req, res) => {
+app.get('/get-data',authMiddleware, async (req, res) => {
   try {
     console.log('helloo')
     // Connect to MongoDB
@@ -180,6 +182,8 @@ app.delete('/delete-data/:id', async (req, res) => {
   }
 });
 
+
+
 ///Update data
 app.patch('/patch-data/:id', async (req, res) => {
   try {
@@ -222,6 +226,73 @@ app.patch('/patch-data/:id', async (req, res) => {
   }
 });
 
+
+///creating a middleware to check authentication 
+
+
+
+
+// Login function
+app.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required." });
+    }
+
+    await client.connect();
+    const database = client.db("subscribers");
+    const collection = database.collection("users");
+
+    const user = await collection.findOne({ username });
+
+    if (!user) {
+      return res.status(401).json({ message: "Authentication failed: User not found." });
+    }
+
+
+
+
+      // Compare plain-text passwords
+      if (user.password !== password) {
+        return res.status(401).json({ message: "Authentication failed: Incorrect password." });
+      }
+   
+
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id, username: user.username }, 'secret', {
+      expiresIn: 60, // Token expires in 1 hour
+    });
+
+    res.status(200).json({ message: "Login successful!", token });
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({ message: "An error occurred during login." });
+  } finally {
+    await client.close();
+  }
+});
+
+
+function authMiddleware (req, res, next)  {
+  // Get the token from the request headers
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+
+
+  if (!token) {
+    return res.status(401).json({ message: 'Access denied. No token provided.' });
+  }
+
+  try {
+    // Verify the token
+    const decoded = jwt.verify(token, 'secret'); // Replace with your secret key
+    req.user = decoded; // Attach the decoded user data to the request object
+    next(); // Proceed to the next middleware or route
+  } catch (error) {
+    res.status(401).json({ message: 'Invalid token.' });
+  }
+};
 
 // // Middleware to parse JSON request bodies
 // app.use(express.json());
